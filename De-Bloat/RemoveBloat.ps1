@@ -295,6 +295,7 @@ $Bloatware = @(
 #Unnecessary Windows 10/11 AppX Apps
 "*ActiproSoftwareLLC*"
 "*AdobeSystemsIncorporated.AdobePhotoshopExpress*"
+"Alexa"
 "*BubbleWitch3Saga*"
 "*CandyCrush*"
 "*DevHome*"
