@@ -197,8 +197,6 @@ $WhitelistedApps = @(
     'Slack',
     'Microsoft.SecHealthUI',
     'WavesAudio.MaxxAudioProforDell2019',
-    'Dell Optimizer Core',
-    'Dell SupportAssist Remediation',
     'Dell SupportAssist OS Recovery Plugin for Dell Update',
     'Dell Pair',
     'Dell Display Manager 2.0',
@@ -313,7 +311,6 @@ $Bloatware = @(
 "*PandoraMediaInc*"
 "*Royal Revolt*"
 "*Speed Test*"
-"*Spotify*"
 "*Sway*"
 "*Twitter*"
 "*Wunderlist*"
@@ -328,11 +325,9 @@ $Bloatware = @(
 "Microsoft.AV1VideoExtension"
 "Microsoft.BingNews"
 "Microsoft.BingSearch"
-"Microsoft.BingWeather"
 "Microsoft.GetHelp"
 "Microsoft.Getstarted"
 "Microsoft.GamingApp"
-"Microsoft.HEVCVideoExtension"
 "Microsoft.Messaging"
 "Microsoft.Microsoft3DViewer"
 "Microsoft.MicrosoftEdge.Stable"
@@ -340,18 +335,14 @@ $Bloatware = @(
 "Microsoft.MicrosoftOfficeHub"
 "Microsoft.MicrosoftSolitaireCollection"
 "Microsoft.MixedReality.Portal"
-"Microsoft.MPEG2VideoExtension"
 "Microsoft.News"
 "Microsoft.Office.Lens"
 "Microsoft.Office.OneNote"
 "Microsoft.Office.Sway"
 "Microsoft.OneConnect"
-"Microsoft.OneDriveSync"
 "Microsoft.People"
-"Microsoft.PowerAutomateDesktop"
 "Microsoft.PowerAutomateDesktopCopilotPlugin"
 "Microsoft.Print3D"
-"Microsoft.RemoteDesktop"
 "Microsoft.SkypeApp"
 "Microsoft.StorePurchaseApp"
 "Microsoft.SysinternalsSuite"
@@ -360,12 +351,10 @@ $Bloatware = @(
 "Microsoft.Whiteboard"
 "Microsoft.Windows.DevHome"
 "Microsoft.WindowsAlarms"
-"Microsoft.WindowsCamera"
 "Microsoft.windowscommunicationsapps"
 "Microsoft.WindowsFeedbackHub"
 "Microsoft.WindowsMaps"
 "Microsoft.WindowsSoundRecorder"
-"Microsoft.WindowsStore"
 "Microsoft.Xbox.TCUI"
 "Microsoft.XboxApp"
 "Microsoft.XboxGameOverlay"
@@ -373,7 +362,6 @@ $Bloatware = @(
 "Microsoft.XboxGamingOverlay_5.721.10202.0_neutral_~_8wekyb3d8bbwe"
 "Microsoft.XboxIdentityProvider"
 "Microsoft.XboxSpeechToTextOverlay"
-"Microsoft.YourPhone"
 "Microsoft.ZuneMusic"
 "Microsoft.ZuneVideo"
 "MicrosoftCorporationII.MicrosoftFamily"
@@ -911,7 +899,7 @@ if ($version -like "*Windows 11*") {
     reg load HKU\temphive "c:\users\default\ntuser.dat"
     $registryPath = "registry::hku\temphive\Software\Policies\Microsoft\Windows\WindowsCopilot"
     $propertyName = "TurnOffWindowsCopilot"
-    $propertyValue = 1
+    $propertyValue = 0
 
     # Check if the registry key exists
     if (!(Test-Path $registryPath)) {
