@@ -194,10 +194,9 @@ $WhitelistedApps = @(
     'Microsoft.DesktopAppInstaller',
     'WindSynthBerry',
     'MIDIBerry',
-    'Slack',
+    'Spotify',
     'Microsoft.SecHealthUI',
     'WavesAudio.MaxxAudioProforDell2019',
-    'Dell SupportAssist OS Recovery Plugin for Dell Update',
     'Dell Pair',
     'Dell Display Manager 2.0',
     'Dell Display Manager 2.1',
@@ -816,7 +815,7 @@ if ($null -ne $task6) {
 #                                                                                                          #
 ############################################################################################################
 #Windows 11 Customisations
-write-output "Removing Windows 11 Customisations"
+# write-output "Removing Windows 11 Customisations"
 
 
 ##Disable Feeds
@@ -845,133 +844,6 @@ if ($version -like "*Windows 10*") {
     }
     write-output "Removed"
 }
-
-############################################################################################################
-#                                           Windows CoPilot                                                #
-#                                                                                                          #
-############################################################################################################
-$version = Get-CimInstance Win32_OperatingSystem | Select-Object -ExpandProperty Caption
-if ($version -like "*Windows 11*") {
-    write-output "Removing Windows Copilot"
-    # Define the registry key and value
-    $registryPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsCopilot"
-    $propertyName = "TurnOffWindowsCopilot"
-    $propertyValue = 1
-
-    # Check if the registry key exists
-    if (!(Test-Path $registryPath)) {
-        # If the registry key doesn't exist, create it
-        New-Item -Path $registryPath -Force | Out-Null
-    }
-
-    # Get the property value
-    $currentValue = Get-ItemProperty -Path $registryPath -Name $propertyName -ErrorAction SilentlyContinue
-
-    # Check if the property exists and if its value is different from the desired value
-    if ($null -eq $currentValue -or $currentValue.$propertyName -ne $propertyValue) {
-        # If the property doesn't exist or its value is different, set the property value
-        Set-ItemProperty -Path $registryPath -Name $propertyName -Value $propertyValue
-    }
-
-
-    ##Grab the default user as well
-    $registryPath = "HKEY_USERS\.DEFAULT\Software\Policies\Microsoft\Windows\WindowsCopilot"
-    $propertyName = "TurnOffWindowsCopilot"
-    $propertyValue = 1
-
-    # Check if the registry key exists
-    if (!(Test-Path $registryPath)) {
-        # If the registry key doesn't exist, create it
-        New-Item -Path $registryPath -Force | Out-Null
-    }
-
-    # Get the property value
-    $currentValue = Get-ItemProperty -Path $registryPath -Name $propertyName -ErrorAction SilentlyContinue
-
-    # Check if the property exists and if its value is different from the desired value
-    if ($null -eq $currentValue -or $currentValue.$propertyName -ne $propertyValue) {
-        # If the property doesn't exist or its value is different, set the property value
-        Set-ItemProperty -Path $registryPath -Name $propertyName -Value $propertyValue
-    }
-
-
-    ##Load the default hive from c:\users\Default\NTUSER.dat
-    reg load HKU\temphive "c:\users\default\ntuser.dat"
-    $registryPath = "registry::hku\temphive\Software\Policies\Microsoft\Windows\WindowsCopilot"
-    $propertyName = "TurnOffWindowsCopilot"
-    $propertyValue = 0
-
-    # Check if the registry key exists
-    if (!(Test-Path $registryPath)) {
-        # If the registry key doesn't exist, create it
-        [Microsoft.Win32.RegistryKey]$HKUCoPilot = [Microsoft.Win32.Registry]::Users.CreateSubKey("temphive\Software\Policies\Microsoft\Windows\WindowsCopilot", [Microsoft.Win32.RegistryKeyPermissionCheck]::ReadWriteSubTree)
-        $HKUCoPilot.SetValue("TurnOffWindowsCopilot", 0x1, [Microsoft.Win32.RegistryValueKind]::DWord)
-    }
-
-
-
-
-
-    $HKUCoPilot.Flush()
-    $HKUCoPilot.Close()
-    [gc]::Collect()
-    [gc]::WaitForPendingFinalizers()
-    reg unload HKU\temphive
-
-
-    write-output "Removed"
-
-
-    foreach ($sid in $UserSIDs) {
-        $registryPath = "Registry::HKU\$sid\SOFTWARE\Policies\Microsoft\Windows\WindowsCopilot"
-        $propertyName = "TurnOffWindowsCopilot"
-        $propertyValue = 1
-
-        # Check if the registry key exists
-        if (!(Test-Path $registryPath)) {
-            # If the registry key doesn't exist, create it
-            New-Item -Path $registryPath -Force | Out-Null
-        }
-
-        # Get the property value
-        $currentValue = Get-ItemProperty -Path $registryPath -Name $propertyName -ErrorAction SilentlyContinue
-
-        # Check if the property exists and if its value is different from the desired value
-        if ($null -eq $currentValue -or $currentValue.$propertyName -ne $propertyValue) {
-            # If the property doesn't exist or its value is different, set the property value
-            Set-ItemProperty -Path $registryPath -Name $propertyName -Value $propertyValue
-        }
-    }
-}
-############################################################################################################
-#                                              Remove Recall                                               #
-#                                                                                                          #
-############################################################################################################
-
-#Turn off Recall
-write-output "Disabling Recall"
-$recall = "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsAI"
-If (!(Test-Path $recall)) {
-    New-Item $recall
-}
-Set-ItemProperty $recall DisableAIDataAnalysis -Value 1
-
-
-$recalluser = 'HKCU:\SOFTWARE\Policies\Microsoft\Windows\WindowsAI'
-If (!(Test-Path $recalluser)) {
-    New-Item $recalluser
-}
-Set-ItemProperty $recalluser DisableAIDataAnalysis -Value 1
-
-##Loop through users and do the same
-foreach ($sid in $UserSIDs) {
-    $recallusers = "Registry::HKU\$sid\SOFTWARE\Policies\Microsoft\Windows\WindowsAI"
-    If (!(Test-Path $recallusers)) {
-        New-Item $recallusers
-    }
-    Set-ItemProperty $recallusers DisableAIDataAnalysis -Value 1
-}
-
 
 ############################################################################################################
 #                                             Clear Start Menu                                             #
@@ -1416,22 +1288,23 @@ if ($manufacturer -like "*Dell*") {
         "DellOptimizerUI"
         "Dell SupportAssist OS Recovery"
         "Dell SupportAssist"
+        "Dell Optimizer"
         "Dell Optimizer Service"
         "Dell Optimizer Core"
         "DellInc.PartnerPromo"
         "DellInc.DellOptimizer"
-        "DellInc.DellCommandUpdate"
+        #"DellInc.DellCommandUpdate"
         "DellInc.DellPowerManager"
         "DellInc.DellDigitalDelivery"
         "DellInc.DellSupportAssistforPCs"
         "DellInc.PartnerPromo"
-        "Dell Command | Update"
-        "Dell Command | Update for Windows Universal"
+        #"Dell Command | Update"
+        #"Dell Command | Update for Windows Universal"
         "Dell Command | Update for Windows 10"
-        "Dell Command | Power Manager"
+        #"Dell Command | Power Manager"
         "Dell Digital Delivery Service"
         "Dell Digital Delivery"
-        "Dell Peripheral Manager"
+        #"Dell Peripheral Manager"
         "Dell Power Manager Service"
         "Dell SupportAssist Remediation"
         "SupportAssist Recovery Assistant"
@@ -1440,9 +1313,9 @@ if ($manufacturer -like "*Dell*") {
         "Dell Update - SupportAssist Update Plugin"
         "Dell Core Services"
         "Dell Pair"
-        "Dell Display Manager 2.0"
-        "Dell Display Manager 2.1"
-        "Dell Display Manager 2.2"
+        #"Dell Display Manager 2.0"
+        #"Dell Display Manager 2.1"
+        #"Dell Display Manager 2.2"
         "Dell SupportAssist Remediation"
         "Dell Update - SupportAssist Update Plugin"
         "DellInc.PartnerPromo"
